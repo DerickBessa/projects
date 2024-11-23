@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
+
+//////////////////////////////parameterization in code
+
+#define TAM 8
+#define TAM_MAX 255
+#define TAM_MIN 0
+
+/////////////////////////////print in binarie
+
+
+
+void print_bin(unsigned char num){
+        for (int i = TAM - 1; i >= 0; i--){
+                int bit = (num>>i) & 1;
+                    printf("%d", bit);
+    }
+        printf("\n");
+}
+
+////////////////////////////////////////////logic part of lock doors
+
+void logic_lock(unsigned char *cabinet){
+                                                            // cabinet = 8bits 00000000
+     unsigned char mask = 0x01;                             // 8 bits 00000000
+     unsigned char position = rand() % 9;
+
+            printf("to get ready i will show to you, what is the current situation of cabinet.\n");
+            print_bin(*cabinet);
+    
+        do
+        {
+         
+            position = rand() % TAM + 1;
+                if (*cabinet == TAM_MAX)// verificacao de se a operacao ainda pode ser realizada
+                {
+                
+                    printf("all are locked. Try again later");
+                    return;
+
+                }
+        }
+        while((*cabinet ^ (mask << position-1)) < *armario);//comparando pra saber se na posicao desejada o armario ja esta ocupado ou nao 
+
+       
+        *cabinet = *cabinet | mask << (position - 1);  //EXAMPLE:// cabinet = 00000000  /// mask = 00001000 //////////// cabinet || mask // cabinet == 00001000
+                print_bin(*cabinet);
+                printf("position %d. LOCKED for you!", position);
+    }
+
+////////////////////////////////////////////logic part of unlock doors
+
+void logic_unlock(unsigned char *cabinet){
+       
+                                                //cabinet = 8bits 00000000
+        unsigned char mask = 0x01;              // 8 bits 00000000
+        unsigned char position = rand() % TAM;
+        
+            printf("to get ready i will show to you, what is the current situation of cabinet.\n");
+            print_bin(*cabinet);
+                do
+                {
+
+                position = rand() % TAM + 1;
+                    
+                    if (*cabinet == TAM_MIN)// verificacao de se a operacao ainda pode ser realizada
+                    { 
+                   
+                        printf("all are unlocked. Try again later");
+                        return;
+
+                    }
+                }
+                while((*cabinet ^ (mask << position-1)) > *cabinet);//comparando pra saber se na posicao desejada o armario ja esta ocupado ou nao
+            
+           
+        *cabinet = *cabinet & ~(mask << (position-1));
+            print_bin(*cabinet);
+            printf("position %d. LOCKED for you!", position);
+}
+
+/////////////////////////////////// activation with mecanism of selection, that can use until press to stop
+
+int main(){
+    int count = 0;
+    
+        srand(time(NULL));
+    
+    unsigned char position = rand() % TAM + 1;
+    unsigned char cabinet = 0, mask; 
+    
+    do
+    {
+        
+        printf("please select you preference option\n  1 : LOCK AN POSITION \n  2 : UNLOCK AN POSITION \n 3 : STOP THE PROCESS\n");
+        scanf("%d", &count);
+     
+        
+            switch (count)
+            {
+                case 1:
+                    logic_lock(&cabinet);
+                    break;
+                case 2:
+                    logic_unlock(&cabinet);
+                    break;
+                case 3:
+                    printf("Stopping process, now.");
+                    break;
+                default:
+                    printf("please select a valid number");
+                    break;
+            }
+    }
+    while (count != 3);
+   
+   return 0;
+}
