@@ -43,7 +43,7 @@ void logic_lock(unsigned char *cabinet){
 
                 }
         }
-        while((*cabinet ^ (mask << position-1)) < *armario);//comparando pra saber se na posicao desejada o armario ja esta ocupado ou nao 
+        while((*cabinet ^ (mask << position-1)) < *cabinet);//comparando pra saber se na posicao desejada o armario ja esta ocupado ou nao 
 
        
         *cabinet = *cabinet | mask << (position - 1);  //EXAMPLE:// cabinet = 00000000  /// mask = 00001000 //////////// cabinet || mask // cabinet == 00001000
